@@ -90,7 +90,7 @@ function dashboard() {
           >
             <Text fontSize='lg' mb='4' >Weekly subscribers</Text>
             <Chart height={160} series={series} options={options} type='area' />
-          </Box>
+          </Box> 
         </SimpleGrid>
       </Flex>
     </Flex >

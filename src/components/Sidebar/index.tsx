@@ -1,27 +1,44 @@
-import { Box, Stack } from "@chakra-ui/react"
-import React from 'react'
-import { RiContactsLine, RiDashboardLine, RiInputMethodLine, RiGitMergeLine } from "react-icons/ri"
-import SideBarLink from "./SideBarLink"
-import SideBarSection from "./SideBarSection"
+import { Box, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, useBreakpointValue } from "@chakra-ui/react"
+import { useEffect } from "react"
+
+import { useSidebarDrawer } from "../../context/SidebarDrawerContext"
+import SideBarNav from "./SideBarNav"
 
 export default function Sidebar() {
+  const { isOpen, onClose } = useSidebarDrawer()
+  const isOnSmallScreen = useBreakpointValue({
+    base: true,
+    lg: false
+  })
+
+  useEffect(() => {
+    console.log(isOpen)
+  }, [isOpen])
+
+  if (
+    isOnSmallScreen
+  ) {
+    return (
+      <Drawer isOpen={isOpen} onClose={onClose} placement="left" >
+        <DrawerOverlay />
+        <DrawerContent bg="gray.800" p='4'>
+          <DrawerCloseButton mt='6' />
+          <DrawerHeader>Navegação</DrawerHeader>
+          <DrawerBody>
+            <SideBarNav />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer >
+    )
+  }
+
   return (
     <Box
       as='aside'
       w='64'
       mr='8'
     >
-      <Stack align='flex-start' spacing='12'>
-        <SideBarSection title='GENERAL'>
-          <SideBarLink icon={RiDashboardLine} title='Dashboard' />
-          <SideBarLink icon={RiContactsLine} title='Users' />
-        </SideBarSection>
-
-        <SideBarSection title='AUTOMATION'>
-          <SideBarLink icon={RiInputMethodLine} title='Forms' />
-          <SideBarLink icon={RiGitMergeLine} title='Automation' />
-        </SideBarSection>
-      </Stack>
+      <SideBarNav />
     </Box>
   )
 }

@@ -22,19 +22,16 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup"
 
 type TFormData = {
-  nome: string
-  email: string
-  password: string
-  confirm_password: string
+  nome?: string
+  email?: string
+  password?: string
+  confirm_password?: string
 }
 
 const formDataSchema = yup.object().shape({
-  nome: yup.string().required(),
-  email: yup.string().required().email("Email invalid"),
-  password: yup
-    .string()
-    .required()
-    .min(6, "Needs at least 6 char"),
+  nome: yup.string(), // Required()
+  email: yup.string().email("Email invalid"),
+  password: yup.string().min(6, "Needs at least 6 char"),
   confirm_password: yup
     .string()
     .oneOf(
@@ -83,6 +80,7 @@ export default function CreateUser() {
           bg="gray.800"
           p={["6", "8"]}
           as="form"
+          onSubmit={handleSubmit(submitForm)}
         >
           <Heading fontWeight="normal" size="lg">
             Usuarios
@@ -97,12 +95,13 @@ export default function CreateUser() {
               spacing={["6", "8"]}
             >
               <Input
-                {...register("nome")}
+                ref={register}
                 label="Nome completo"
                 name="nome"
                 error={nome}
               />
               <Input
+                ref={register}
                 label="Email"
                 name="email"
                 type="email"
@@ -116,12 +115,14 @@ export default function CreateUser() {
               spacing={["6", "8"]}
             >
               <Input
+                ref={register}
                 label="Senha"
                 name="password"
                 type="password"
                 error={password}
               />
               <Input
+                ref={register}
                 label="Confirmar senha"
                 name="confirm_password"
                 type="password"

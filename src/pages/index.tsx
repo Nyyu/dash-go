@@ -17,11 +17,8 @@ type TFormData = {
 }
 
 const signInFormSchema = yup.object().shape({
-  email: yup
-    .string()
-    .required("Email required")
-    .email("Email invalid"),
-  password: yup.string().required("Password required"),
+  email: yup.string().email("Email invalid"),
+  password: yup.string(),
 })
 
 const Home: NextPage = () => {
@@ -66,17 +63,17 @@ const Home: NextPage = () => {
       >
         <Stack spacing={4}>
           <Input
-            {...register("email")}
-            name="email"
+            // name="email"
             label="Email"
             type="email"
+            {...register("email")}
             error={email}
           />
           <Input
-            {...register("password")}
-            name="password"
+            // name="password"
             label="Password"
             type="password"
+            {...register("password")}
             error={password}
           />
         </Stack>

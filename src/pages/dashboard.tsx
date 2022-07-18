@@ -76,7 +76,7 @@ function dashboard() {
 
         <SimpleGrid minChildWidth='320px' flex='1' gap='4' alignContent='flex-start'>
           <Box
-            p='8'
+            p={['6', '8']}
             bg='gray.800'
             borderRadius={8}
           >
@@ -84,13 +84,13 @@ function dashboard() {
             <Chart height={160} series={series} options={options} type='area' />
           </Box>
           <Box
-            p='8'
+            p={['6', '8']}
             bg='gray.800'
             borderRadius={8}
           >
             <Text fontSize='lg' mb='4' >Weekly subscribers</Text>
             <Chart height={160} series={series} options={options} type='area' />
-          </Box> 
+          </Box>
         </SimpleGrid>
       </Flex>
     </Flex >

@@ -11,19 +11,25 @@ export default function Sidebar() {
     lg: false
   })
 
-  useEffect(() => {
-    console.log(isOpen)
-  }, [isOpen])
+  // Context working properly, everything is fine aside from the drawer itself.
+  // For some reason, even if I set it to TRUE, it's not opening naturally.
+  // Something got messed up but I can't quite find it. It's either this drawer sucks
+  // or this coder sucks, likely the latter
+  useEffect(() => console.log(isOpen), [isOpen])
 
   if (
     isOnSmallScreen
   ) {
     return (
-      <Drawer isOpen={isOpen} onClose={onClose} placement="left" >
+      <Drawer
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="left"
+      >
         <DrawerOverlay />
         <DrawerContent bg="gray.800" p='4'>
           <DrawerCloseButton mt='6' />
-          <DrawerHeader>Navegação</DrawerHeader>
+          <DrawerHeader> Navigation </DrawerHeader>
           <DrawerBody>
             <SideBarNav />
           </DrawerBody>

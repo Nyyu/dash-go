@@ -7,13 +7,13 @@ export default function SideBarNav() {
   return (
     <Stack align='flex-start' spacing='12'>
       <SideBarSection title='GENERAL'>
-        <SideBarLink icon={RiDashboardLine} title='Dashboard' />
-        <SideBarLink icon={RiContactsLine} title='Users' />
+        <SideBarLink href="/dashboard" icon={RiDashboardLine} title='Dashboard' />
+        <SideBarLink href="/users" icon={RiContactsLine} title='Users' />
       </SideBarSection>
 
       <SideBarSection title='AUTOMATION'>
-        <SideBarLink icon={RiInputMethodLine} title='Forms' />
-        <SideBarLink icon={RiGitMergeLine} title='Automation' />
+        <SideBarLink href="/forms" icon={RiInputMethodLine} title='Forms' />
+        <SideBarLink href="/automation" icon={RiGitMergeLine} title='Automation' />
       </SideBarSection>
     </Stack>
   )

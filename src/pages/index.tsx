@@ -1,8 +1,52 @@
 import { Button, Flex, Stack } from "@chakra-ui/react"
-import type { NextPage } from 'next'
+import type { NextPage } from "next"
+import Link from "next/link"
+import {
+  FieldError,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form"
 import Input from "../components/Form/Input"
 
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
+
+type TFormData = {
+  email?: string
+  password?: string
+}
+
+const signInFormSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required("Email required")
+    .email("Email invalid"),
+  password: yup.string().required("Password required"),
+})
+
 const Home: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm({
+    resolver: yupResolver(signInFormSchema),
+  })
+
+  // Eu lhe apresento gambiarra, agora meu typescript para de chora
+  const { email, password } = errors as unknown as {
+    email: FieldError
+    password: FieldError
+  }
+
+  const handleLogin: SubmitHandler<TFormData> = async (
+    values
+  ) => {
+    await new Promise((resolve) =>
+      setTimeout(resolve, 2000)
+    )
+  }
+
   return (
     <Flex
       justify="center"
@@ -18,17 +62,34 @@ const Home: NextPage = () => {
         bg="gray.800"
         borderRadius={8}
         flexDir="column"
+        onSubmit={handleSubmit(handleLogin)}
       >
-        <Stack spacing={4} >
-          <Input name="email" label="Email" type="email" />
-          <Input name="password" label="Password" type="password" />
+        <Stack spacing={4}>
+          <Input
+            {...register("email")}
+            name="email"
+            label="Email"
+            type="email"
+            error={email}
+          />
+          <Input
+            {...register("password")}
+            name="password"
+            label="Password"
+            type="password"
+            error={password}
+          />
         </Stack>
+
         <Button
           type="submit"
           colorScheme="pink"
           mt="6"
           size="lg"
-        >Entrar</Button>
+          isLoading={isSubmitting}
+        >
+          Entrar
+        </Button>
       </Flex>
     </Flex>
   )

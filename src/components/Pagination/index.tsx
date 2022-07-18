@@ -1,14 +1,19 @@
-import { Box, Button, HStack, Text } from "@chakra-ui/react"
+import { Box, Button, HStack, Stack, Text, useBreakpointValue } from "@chakra-ui/react"
 import PaginationBtn from "./PaginationBtn"
 
 export default function Pagination() {
+  const isWide = useBreakpointValue({
+    base: false,
+    lg: true
+  })
+
   return (
-    <HStack
+    <Stack
       spacing='6'
       align='center'
       justify='space-between'
-
       mt='8'
+      direction={(isWide ? 'row' : 'column')}
     >
       <Box>
         <Text><strong>0</strong> - <strong>1</strong> de <strong>100</strong> registros</Text>
@@ -20,6 +25,6 @@ export default function Pagination() {
         <PaginationBtn number={3} />
         <PaginationBtn number={4} />
       </HStack>
-    </HStack>
+    </Stack >
   )
 }

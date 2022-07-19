@@ -13,21 +13,20 @@ import React, { ForwardRefRenderFunction } from "react"
 interface InputProps extends ChakraInputProps {
   name: string
   label: string
-  error?: FieldError
+  error?: FieldError | null
+  reg: any
 }
 
 const InputRaw: ForwardRefRenderFunction<
   HTMLInputElement,
   InputProps
-> = ({ name, label, error = null }, ref) => {
+> = ({ name, label, error = null, reg, ...rest }, ref) => {
   return (
     <FormControl isInvalid={!!error}>
       {!!label && (
-        <FormLabel htmlFor={name}>{label}</FormLabel>
+        <FormLabel>{label}</FormLabel>
       )}
       <ChakraInput
-        name={name}
-        id={name}
         variant="filled"
         bg="gray.900"
         focusBorderColor="pink.500"
@@ -35,6 +34,7 @@ const InputRaw: ForwardRefRenderFunction<
         _hover={{
           bg: "gray.900",
         }}
+        {...reg(name)}
       />
 
       {!!error && (

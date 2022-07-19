@@ -29,15 +29,19 @@ type TFormData = {
 }
 
 const formDataSchema = yup.object().shape({
-  nome: yup.string(), // Required()
-  email: yup.string().email("Email invalid"),
-  password: yup.string().min(6, "Needs at least 6 char"),
+  nome: yup.string().required(), // Required()
+  email: yup.string().email("Email invalid").required(),
+  password: yup
+    .string()
+    .min(6, "Needs at least 6 char")
+    .required(),
   confirm_password: yup
     .string()
     .oneOf(
       [null, yup.ref("password")],
       "Password needs to match"
-    ),
+    )
+    .required(),
 })
 
 export default function CreateUser() {
@@ -95,15 +99,13 @@ export default function CreateUser() {
               spacing={["6", "8"]}
             >
               <Input
-                ref={register}
+                {...register("nome")}
                 label="Nome completo"
-                name="nome"
                 error={nome}
               />
               <Input
-                ref={register}
+                {...register("email")}
                 label="Email"
-                name="email"
                 type="email"
                 error={email}
               />
@@ -115,16 +117,14 @@ export default function CreateUser() {
               spacing={["6", "8"]}
             >
               <Input
-                ref={register}
+                {...register("password")}
                 label="Senha"
-                name="password"
                 type="password"
                 error={password}
               />
               <Input
-                ref={register}
+                {...register("confirm_password")}
                 label="Confirmar senha"
-                name="confirm_password"
                 type="password"
                 error={confirm_password}
               />

@@ -99,15 +99,17 @@ export default function CreateUser() {
               spacing={["6", "8"]}
             >
               <Input
-                {...register("nome")}
                 label="Nome completo"
                 error={nome}
+                name={"nome"}
+                reg={register}
               />
               <Input
-                {...register("email")}
                 label="Email"
                 type="email"
                 error={email}
+                name={"email"}
+                reg={register}
               />
             </SimpleGrid>
 
@@ -117,16 +119,18 @@ export default function CreateUser() {
               spacing={["6", "8"]}
             >
               <Input
-                {...register("password")}
                 label="Senha"
                 type="password"
                 error={password}
+                name={"password"}
+                reg={register}
               />
               <Input
-                {...register("confirm_password")}
                 label="Confirmar senha"
                 type="password"
                 error={confirm_password}
+                name={"confirm_password"}
+                reg={register}
               />
             </SimpleGrid>
           </VStack>

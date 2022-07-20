@@ -1,4 +1,9 @@
-import { createServer, Factory, Model } from "miragejs"
+import {
+  createServer,
+  Factory,
+  Model,
+  Response,
+} from "miragejs"
 
 interface User {
   name: string
@@ -27,7 +32,7 @@ export function makeServer() {
     },
 
     seeds(server) {
-      server.createList("user", 5)
+      server.createList("user", 100)
     },
 
     routes() {
@@ -38,7 +43,20 @@ export function makeServer() {
       this.timing = 750
 
       // Shorthand for basic REST operation
-      this.get("/users")
+      this.get("/users", (schema, request) => {
+        const { page = 1, per_page = 10 }: any =
+          request.queryParams
+
+        const data = schema.all("user")
+        const total = data.length
+
+        const pageStart = (page - 1) * per_page
+        const pageEnd = pageStart + per_page
+
+        const users = data.slice(pageStart, pageEnd)
+
+        return users
+      })
       this.post("/users")
 
       // If you need to use w NextJS you can reset the namespace & passthrough so that next can use it's own Api folder, as following:

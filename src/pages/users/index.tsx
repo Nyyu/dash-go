@@ -15,49 +15,29 @@ import {
   Tr,
   useBreakpointValue,
 } from "@chakra-ui/react"
+import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
-import { RiAddLine, RiPencilLine } from "react-icons/ri"
+import { RiAddLine } from "react-icons/ri"
 import Header from "../../components/Header"
 import Pagination from "../../components/Pagination"
 import Sidebar from "../../components/Sidebar"
 
-import { useQuery } from "@tanstack/react-query"
+import {
+  getUsers,
+  useUsers,
+} from "../../services/hooks/useUsers"
 
 function ListagemUsuarios() {
   const { data, isLoading, error, refetch, isFetching } =
-    useQuery(
-      ["users"],
-      async () => {
-        const res = await fetch("/api/users")
-        const data = await res.json()
-
-        const users = data.users.map(
-          ({ id, nome, email, createdAt }: any) => ({
-            id,
-            nome,
-            email,
-            createdAt: new Date(
-              createdAt
-            ).toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            }),
-          })
-        )
-
-        return users
-      },
-      {
-        staleTime: 1000 * 25, // 25 seconds
-      }
-    )
-
+    useQuery(["users"], getUsers, {
+      staleTime: 1000 * 25, // 25 seconds
+    })
   const isWide = useBreakpointValue({
     base: false,
     lg: true,
   })
 
+  const temp = useUsers()
   return (
     <Box>
       <Header />
@@ -141,33 +121,36 @@ function ListagemUsuarios() {
                 </Thead>
 
                 <Tbody>
-                  {data.map((item: any) => (
-                    <Tr key={item.id}>
-                      <Td
-                        px={["4", "6"]}
-                        color="gray.300"
-                        w="8"
-                      >
-                        <Checkbox colorScheme="pink" />
-                      </Td>
+                  {data instanceof Array &&
+                    data.map((item: any) => (
+                      <Tr key={item.id}>
+                        <Td
+                          px={["4", "6"]}
+                          color="gray.300"
+                          w="8"
+                        >
+                          <Checkbox colorScheme="pink" />
+                        </Td>
 
-                      <Td>
-                        <Box>
-                          <Text fontWeight="bold">
-                            {item.name}
-                          </Text>
-                          <Text
-                            color="gray.300"
-                            fontSize="sm"
-                          >
-                            {item.email}
-                          </Text>
-                        </Box>
-                      </Td>
+                        <Td>
+                          <Box>
+                            <Text fontWeight="bold">
+                              {item.name}
+                            </Text>
+                            <Text
+                              color="gray.300"
+                              fontSize="sm"
+                            >
+                              {item.email}
+                            </Text>
+                          </Box>
+                        </Td>
 
-                      {isWide && <Td>{item.createdAt}</Td>}
-                    </Tr>
-                  ))}
+                        {isWide && (
+                          <Td>{item.createdAt}</Td>
+                        )}
+                      </Tr>
+                    ))}
                 </Tbody>
               </Table>
 

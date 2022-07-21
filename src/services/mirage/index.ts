@@ -50,13 +50,21 @@ export function makeServer() {
         const data = schema.all("user")
         const total = data.length
 
-        const pageStart = (page - 1) * per_page
-        const pageEnd = pageStart + per_page
+        const pageStart =
+          (Number(page) - 1) * Number(per_page)
+        const pageEnd = pageStart + Number(per_page)
 
         const users = data.slice(pageStart, pageEnd)
 
-        return users
+        return new Response(
+          200,
+          {
+            "x-total-count": String(total),
+          },
+          { users }
+        )
       })
+
       this.post("/users")
 
       // If you need to use w NextJS you can reset the namespace & passthrough so that next can use it's own Api folder, as following:

@@ -14,7 +14,7 @@ export interface Users {
 export async function getUsers(): Promise<Users[]> {
   const { data } = await api("users")
 
-  const users = data.users.map(
+  const users = data.users.models.map(
     ({ id, nome, email, createdAt }: any) => ({
       id,
       nome,

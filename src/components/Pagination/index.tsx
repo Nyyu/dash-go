@@ -33,8 +33,13 @@ export default function Pagination({
     lg: true,
   })
 
-  const lastPage = Math.floor(
+  const lastPageValue =
     totalCountOfRegisters / registersPerPage
+
+  const lastPage = Math.floor(
+    lastPageValue % 2 === 1
+      ? lastPageValue + 1
+      : lastPageValue
   )
 
   const previousPage =
@@ -70,7 +75,10 @@ export default function Pagination({
       <HStack align="center" spacing="2">
         {currentPage > 1 + siblingCount && (
           <>
-            <PaginationBtn number={1} />
+            <PaginationBtn
+              number={1}
+              onPageChange={onPageChange}
+            />
             {currentPage > 2 + siblingCount && (
               <Text
                 color="gray.300"
@@ -86,15 +94,27 @@ export default function Pagination({
         {previousPage.length > 0 &&
           previousPage.map((page) => (
             <>
-              <PaginationBtn number={page} key={page} />
+              <PaginationBtn
+                onPageChange={onPageChange}
+                number={page}
+                key={page}
+              />
             </>
           ))}
 
-        <PaginationBtn number={currentPage} isActive />
+        <PaginationBtn
+          onPageChange={onPageChange}
+          number={currentPage}
+          isActive
+        />
 
         {nextPage.length > 0 &&
           nextPage.map((page) => (
-            <PaginationBtn number={page} key={page} />
+            <PaginationBtn
+              onPageChange={onPageChange}
+              number={page}
+              key={page}
+            />
           ))}
 
         {currentPage + siblingCount < lastPage && (
@@ -108,7 +128,10 @@ export default function Pagination({
                 ...
               </Text>
             )}
-            <PaginationBtn number={lastPage} />
+            <PaginationBtn
+              onPageChange={onPageChange}
+              number={lastPage}
+            />
           </>
         )}
       </HStack>

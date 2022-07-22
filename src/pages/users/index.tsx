@@ -4,6 +4,7 @@ import {
   Checkbox,
   Flex,
   Heading,
+  HStack,
   Icon,
   Spinner,
   Table,
@@ -13,23 +14,31 @@ import {
   Th,
   Thead,
   Tr,
+  Link,
   useBreakpointValue,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import Link from "next/link"
+import NextLink from "next/link"
+import { useState } from "react"
 import { RiAddLine } from "react-icons/ri"
 import Header from "../../components/Header"
 import Pagination from "../../components/Pagination"
 import Sidebar from "../../components/Sidebar"
+import { api } from "../../services/api"
 
 import {
   getUsers,
-  useUsers,
+  Users,
 } from "../../services/hooks/useUsers"
+import { queryClient } from "../../services/QueryClient"
+
+import { v4 as uuid } from "uuid"
 
 function ListagemUsuarios() {
+  const [page, setPage] = useState(1)
+
   const { data, isLoading, error, refetch, isFetching } =
-    useQuery(["users"], getUsers, {
+    useQuery(["users", page], () => getUsers(page), {
       staleTime: 1000 * 25, // 25 seconds
     })
   const isWide = useBreakpointValue({
@@ -37,7 +46,19 @@ function ListagemUsuarios() {
     lg: true,
   })
 
-  const temp = useUsers()
+  async function handleUserPrefetch(id: number) {
+    await queryClient.prefetchQuery(
+      ["user", id],
+      async () => {
+        const { data } = await api.get(`/users/${id}`)
+        return data
+      },
+      {
+        staleTime: 1000 * 60 * 5, // 5 minutes
+      }
+    )
+  }
+
   return (
     <Box>
       <Header />
@@ -68,29 +89,31 @@ function ListagemUsuarios() {
               )}
             </Heading>
 
-            <Button
-              size="sm"
-              fontSize="sm"
-              colorScheme="gray"
-              color="gray.400"
-              onClick={() => refetch()}
-            >
-              Reload
-            </Button>
-
-            <Link href="/users/create">
+            <HStack>
               <Button
-                as="a"
                 size="sm"
                 fontSize="sm"
-                colorScheme="pink"
-                leftIcon={
-                  <Icon as={RiAddLine} fontSize="20" />
-                }
+                colorScheme="gray"
+                color="gray.400"
+                onClick={() => refetch()}
               >
-                Add user
+                Reload
               </Button>
-            </Link>
+
+              <NextLink href="/users/create">
+                <Button
+                  as="a"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="pink"
+                  leftIcon={
+                    <Icon as={RiAddLine} fontSize="20" />
+                  }
+                >
+                  Add user
+                </Button>
+              </NextLink>
+            </HStack>
           </Flex>
 
           {isLoading ? (
@@ -121,9 +144,9 @@ function ListagemUsuarios() {
                 </Thead>
 
                 <Tbody>
-                  {data instanceof Array &&
-                    data.map((item: any) => (
-                      <Tr key={item.id}>
+                  {data?.users instanceof Array &&
+                    data?.users.map((item: Users) => (
+                      <Tr key={item?.id ?? uuid()}>
                         <Td
                           px={["4", "6"]}
                           color="gray.300"
@@ -133,9 +156,13 @@ function ListagemUsuarios() {
                         </Td>
 
                         <Td>
-                          <Box>
+                          <Link
+                            onMouseEnter={() =>
+                              handleUserPrefetch(+item.id)
+                            }
+                          >
                             <Text fontWeight="bold">
-                              {item.name}
+                              {item.nome}
                             </Text>
                             <Text
                               color="gray.300"
@@ -143,7 +170,7 @@ function ListagemUsuarios() {
                             >
                               {item.email}
                             </Text>
-                          </Box>
+                          </Link>
                         </Td>
 
                         {isWide && (
@@ -155,9 +182,11 @@ function ListagemUsuarios() {
               </Table>
 
               <Pagination
-                totalCountOfRegisters={200}
-                currentPage={19}
-                onPageChange={() => {}}
+                totalCountOfRegisters={
+                  data?.totalCount ?? 0
+                }
+                currentPage={page}
+                onPageChange={setPage}
               />
             </>
           )}

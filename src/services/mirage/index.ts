@@ -1,4 +1,5 @@
 import {
+  ActiveModelSerializer,
   createServer,
   Factory,
   Model,
@@ -13,13 +14,17 @@ interface User {
 
 export function makeServer() {
   const server = createServer({
+    serializers: {
+      application: ActiveModelSerializer,
+    },
+
     models: {
       user: Model.extend<Partial<User>>({}),
     },
 
     factories: {
       user: Factory.extend({
-        name(i) {
+        nome(i) {
           return `user ${i + 1}`
         },
         email(i) {
@@ -32,7 +37,7 @@ export function makeServer() {
     },
 
     seeds(server) {
-      server.createList("user", 100)
+      server.createList("user", 25)
     },
 
     routes() {
@@ -42,8 +47,7 @@ export function makeServer() {
       // Delay
       this.timing = 750
 
-      // Shorthand for basic REST operation
-      this.get("/users", (schema, request) => {
+      this.get("/users", function (schema, request) {
         const { page = 1, per_page = 10 }: any =
           request.queryParams
 
@@ -65,6 +69,8 @@ export function makeServer() {
         )
       })
 
+      // Shorthand for basic REST operation
+      this.get("/users/:id")
       this.post("/users")
 
       // If you need to use w NextJS you can reset the namespace & passthrough so that next can use it's own Api folder, as following:

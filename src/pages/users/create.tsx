@@ -13,6 +13,8 @@ import Input from "../../components/Form/Input"
 import Header from "../../components/Header"
 import Sidebar from "../../components/Sidebar"
 
+import { v4 as uuid } from "uuid"
+
 import * as yup from "yup"
 import {
   FieldError,
@@ -20,6 +22,10 @@ import {
   useForm,
 } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
+import { useMutation } from "@tanstack/react-query"
+import { api } from "../../services/api"
+import { queryClient } from "../../services/QueryClient"
+import { useRouter } from "next/router"
 
 type TFormData = {
   nome?: string
@@ -45,6 +51,27 @@ const formDataSchema = yup.object().shape({
 })
 
 export default function CreateUser() {
+  const router = useRouter()
+
+  const createUser = useMutation(
+    async (user: TFormData) => {
+      const response = await api.post("users", {
+        user: {
+          id: uuid(),
+          ...user,
+          created_at: new Date(),
+        },
+      })
+
+      return response.data.user
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(["users"])
+        router.push("/users")
+      },
+    }
+  )
   const {
     register,
     handleSubmit,
@@ -61,8 +88,10 @@ export default function CreateUser() {
       confirm_password: FieldError
     }
 
-  const submitForm: SubmitHandler<TFormData> = (event) => {
-    console.log(event)
+  const submitForm: SubmitHandler<TFormData> = async (
+    userData
+  ) => {
+    await createUser.mutateAsync(userData)
   }
 
   return (

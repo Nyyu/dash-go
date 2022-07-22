@@ -29,17 +29,20 @@ import { api } from "../../services/api"
 import {
   getUsers,
   Users,
+  useUsers,
 } from "../../services/hooks/useUsers"
 import { queryClient } from "../../services/QueryClient"
 
 import { v4 as uuid } from "uuid"
+import { GetServerSideProps } from "next"
 
-function ListagemUsuarios() {
+function ListagemUsuarios({ users }: any) {
   const [page, setPage] = useState(1)
 
   const { data, isLoading, error, refetch, isFetching } =
     useQuery(["users", page], () => getUsers(page), {
       staleTime: 1000 * 25, // 25 seconds
+      initialData: users,
     })
   const isWide = useBreakpointValue({
     base: false,
@@ -195,5 +198,16 @@ function ListagemUsuarios() {
     </Box>
   )
 }
+
+export const getServerSideProps: GetServerSideProps =
+  async () => {
+    const { users } = await getUsers(1)
+
+    return {
+      props: {
+        users,
+      },
+    }
+  }
 
 export default ListagemUsuarios
